@@ -1,5 +1,5 @@
 {
-  "name": "typedoc",
+  "name": "@baidu/b2b-typedoc",
   "description": "Create api documentation for TypeScript projects.",
   "version": "0.24.8",
   "homepage": "https://typedoc.org",
@@ -24,7 +24,9 @@
     "node": ">= 16"
   },
   "dependencies": {
+    "@node-rs/jieba": "^1.7.2",
     "lunr": "^2.3.9",
+    "lunr-languages": "^1.12.0",
     "marked": "^4.3.0",
     "minimatch": "^9.0.3",
     "shiki": "^0.14.1"

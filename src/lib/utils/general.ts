@@ -7,7 +7,7 @@ import * as Util from "util";
  * script will be used to switch this flag to false when publishing, then immediately back
  * to true after a successful publish.
  */
-type InternalOnly = true;
+type InternalOnly = false;
 
 /**
  * Helper type to convert `T` to `F` if strict mode is on.

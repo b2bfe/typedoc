@@ -1,6 +1,13 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import * as Path from "path";
-import { Builder, trimmer } from "lunr";
-
+import lunr from "lunr";
+// import "lunr-languages/lunr.multi.js";
+// import "lunr-languages/lunr.stemmer.support.js";
+// require("lunr-languages/lunr.multi.js")(lunr);
+// require("lunr-languages/lunr.stemmer.support.js")(lunr);
+require("lunr-languages/lunr.stemmer.support.js")(lunr);
+require("lunr-languages/lunr.multi.js")(lunr);
+require("lunr-languages/lunr.zh.js")(lunr);
 import {
     Comment,
     DeclarationReflection,
@@ -10,6 +17,7 @@ import { Component, RendererComponent } from "../components";
 import { IndexEvent, RendererEvent } from "../events";
 import { BindOption, writeFileSync } from "../../utils";
 import { DefaultTheme } from "../themes/default/DefaultTheme";
+import type { LunrSupportLanugage } from "../../utils/options/declaration";
 
 /**
  * Keep this in sync with the interface in src/lib/output/themes/default/assets/typedoc/components/Search.ts
@@ -32,6 +40,9 @@ export class JavascriptIndexPlugin extends RendererComponent {
     @BindOption("searchInComments")
     searchComments!: boolean;
 
+    @BindOption("searchInCommentsSupportLanguage")
+    searchInCommentsSupportLanguage!: LunrSupportLanugage[];
+
     /**
      * Create a new JavascriptIndexPlugin instance.
      */
@@ -44,7 +55,7 @@ export class JavascriptIndexPlugin extends RendererComponent {
      *
      * @param event  An event object describing the current render operation.
      */
-    private onRendererBegin(event: RendererEvent) {
+    private async onRendererBegin(event: RendererEvent) {
         if (!(this.owner.theme instanceof DefaultTheme)) {
             return;
         }
@@ -55,7 +66,7 @@ export class JavascriptIndexPlugin extends RendererComponent {
         const rows: SearchDocument[] = [];
 
         const initialSearchResults = Object.values(
-            event.project.reflections,
+            event.project.reflections
         ).filter((refl) => {
             return (
                 refl instanceof DeclarationReflection &&
@@ -67,7 +78,7 @@ export class JavascriptIndexPlugin extends RendererComponent {
 
         const indexEvent = new IndexEvent(
             IndexEvent.PREPARE_INDEX,
-            initialSearchResults,
+            initialSearchResults
         );
 
         this.owner.trigger(indexEvent);
@@ -76,12 +87,32 @@ export class JavascriptIndexPlugin extends RendererComponent {
             return;
         }
 
-        const builder = new Builder();
-        builder.pipeline.add(trimmer);
+        const builder = new lunr.Builder();
+        // builder.pipeline.add(trimmer);
+        // if (this.searchInCommentsSupportLanguage.length > 0) {
+        //     const languageList: Record<string, any> = {};
+        //     // require("lunr-languages/lunr.multi.js")(lunr);
+        //     // require("lunr-languages/lunr.stemmer.support.js")(lunr);
+        //     for (const lang of this.searchInCommentsSupportLanguage) {
+        //         const language = await import(`lunr-languages/lunr.${lang}.js`);
+        //         languageList[lang] = language.default;
+        //         console.log("language", languageList[lang]);
+        //         console.log("typeof", languageList[lang](lunr));
+        //         // builder.pipeline.add(languageList[lang](lunr).stemmer);
+        //     }
+
+        //     // this.searchInCommentsSupportLanguage.forEach((lang) => {
+        //     //     // eslint-disable-next-line @typescript-eslint/no-var-requires
+        //     //     const language = require(`lunr-languages/${lang}.js`)(lunr);
+        //     //     builder.pipeline.add(language.stemmer);
+        //     // });
+        //     // } else {
+        // }
+        builder.pipeline.add((lunr as any).zh.trimmer!);
 
         builder.ref("id");
         for (const [key, boost] of Object.entries(
-            indexEvent.searchFieldWeights,
+            indexEvent.searchFieldWeights
         )) {
             builder.field(key, { boost });
         }
@@ -119,7 +150,7 @@ export class JavascriptIndexPlugin extends RendererComponent {
                     ...indexEvent.searchFields[rows.length],
                     id: rows.length,
                 },
-                { boost },
+                { boost }
             );
             rows.push(row);
         }
@@ -129,7 +160,7 @@ export class JavascriptIndexPlugin extends RendererComponent {
         const jsonFileName = Path.join(
             event.outputDirectory,
             "assets",
-            "search.js",
+            "search.js"
         );
 
         const jsonData = JSON.stringify({
@@ -139,7 +170,7 @@ export class JavascriptIndexPlugin extends RendererComponent {
 
         writeFileSync(
             jsonFileName,
-            `window.searchData = JSON.parse(${JSON.stringify(jsonData)});`,
+            `window.searchData = JSON.parse(${JSON.stringify(jsonData)});`
         );
     }
 
@@ -149,7 +180,7 @@ export class JavascriptIndexPlugin extends RendererComponent {
         const comments: Comment[] = [];
         if (reflection.comment) comments.push(reflection.comment);
         reflection.signatures?.forEach(
-            (s) => s.comment && comments.push(s.comment),
+            (s) => s.comment && comments.push(s.comment)
         );
         reflection.getSignature?.comment &&
             comments.push(reflection.getSignature.comment);

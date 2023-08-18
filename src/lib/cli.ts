@@ -9,7 +9,7 @@ const ExitCodes = {
     ExceptionThrown: 6,
 };
 
-import * as td from "typedoc";
+import * as td from "@baidu/b2b-typedoc";
 
 const app = new td.Application();
 

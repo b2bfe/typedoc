@@ -71,6 +71,35 @@ export type TypeDocOptionValues = {
         : TypeDocOptionMap[K][keyof TypeDocOptionMap[K]];
 };
 
+export type LunrSupportLanugage =
+    | "ar"
+    | "da"
+    | "de"
+    | "du"
+    | "es"
+    | "fi"
+    | "fr"
+    | "hi"
+    | "hu"
+    | "hy"
+    | "it"
+    | "ja"
+    | "jp"
+    | "kn"
+    | "ko"
+    | "nl"
+    | "no"
+    | "pt"
+    | "ro"
+    | "ru"
+    | "sa"
+    | "sv"
+    | "ta"
+    | "te"
+    | "th"
+    | "tr"
+    | "vi"
+    | "zh";
 /**
  * Describes all TypeDoc options. Used internally to provide better types when fetching options.
  * External consumers should likely use {@link TypeDocOptions} instead.
@@ -133,6 +162,7 @@ export interface TypeDocOptionMap {
     hideGenerator: boolean;
     hideParameterTypesInTitle: boolean;
     searchInComments: boolean;
+    searchInCommentsSupportLanguage: LunrSupportLanugage[];
     cleanOutputDir: boolean;
     titleLink: string;
     navigationLinks: ManuallyValidatedOption<Record<string, string>>;
