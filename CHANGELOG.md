@@ -1,17 +1,35 @@
 # Unreleased
 
+### Bug Fixes
+
+-   `@property` now works as expected if used to override a method's documentation.
+
+# v0.25.0 (2023-08-25)
+
 ### Breaking Changes
 
 -   Bump minimum Node version to 16.
+-   Removed `legacy-packages` option for `--entryPointStrategy`.
+-   Changed default value of `--categorizeByGroup` to `false`.
+-   Specifying a link as the `gitRemote` is no longer supported.
+-   An `Application` instance must now be retrieved via `Application.bootstrap` or `Application.bootstrapWithPlugins`, #2268.
+-   Removed `ReflectionKind.ObjectLiteral` that was never used by TypeDoc.
+-   Removed deprecated members `DefaultThemeRenderContext.comment` and `DefaultThemeRenderContext.attemptExternalResolution`.
 
 ### Features
 
+-   Added support for TypeScript 5.2, #2373.
+-   TypeDoc config files now support options default-exported from an ESM config file, #2268.
+-   TypeDoc config files may now export a promise containing configuration, #2268.
+-   Added `--preserveLinkText` option (defaults to true) which determines whether the reflection name or full link text is included
+    in the output when no override is specified, #2355.
 -   Added a no-results placeholder when no search results are available, #2347.
 -   Implemented several miscellaneous performance improvements to generate docs faster, this took the time to generate TypeDoc's
     site from ~5.6 seconds to ~5.4 seconds.
 -   Added `--disableGit` option to prevent TypeDoc from using Git to try to determine if sources can be linked, #2326.
 -   Added support for tags `@showGroups`, `@hideGroups`, `@showCategories`, `@hideCategories` to configure the navigation pane on a
     per-reflection basis, #2329.
+-   With `--jsDocCompatibility.defaultTags` set, `@defaultValue` is now implicitly a code block if the text contains no code, #2370.
 
 ### Bug Fixes
 
@@ -23,11 +41,17 @@
 -   Fixed misleading type annotation on `Theme.getUrls`, #2318.
 -   Fixed duplicate namespace in documentation if `@namespace` is used on a variable with an associated namespace, #2364.
 -   Fixed `@namespace` property discovery if merged with a type and the type was declared first #2364.
+-   Tables in markdown are now styled, #2366.
+-   Sidebar links no longer open in a new tab, #2353.
+-   Headers now include some padding before rendering text, #2316.
 -   Symbol locations for signatures on `reflection.sources` now considers the node's name like non-signature location discovery does.
 
 ### Thanks!
 
 -   @camc314
+-   @cprussin
+-   @roggervalf
+-   @Th3S4mur41
 
 ## v0.24.8 (2023-06-04)
 

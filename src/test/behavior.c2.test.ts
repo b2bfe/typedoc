@@ -277,6 +277,19 @@ describe("Behavior Tests", () => {
         logger.expectNoOtherMessages();
     });
 
+    it("Handles @defaultValue tags", () => {
+        const project = convert("defaultValueTag");
+        const foo = query(project, "foo");
+        const tags = foo.comment?.blockTags.map((tag) => tag.content);
+
+        equal(tags, [
+            [{ kind: "code", text: "```ts\n\n```" }],
+            [{ kind: "code", text: "```ts\nfn({})\n```" }],
+        ]);
+
+        logger.expectNoOtherMessages();
+    });
+
     it("Handles @example tags with JSDoc compat turned on", () => {
         const project = convert("exampleTags");
         const foo = query(project, "foo");
@@ -739,7 +752,7 @@ describe("Behavior Tests", () => {
             [ReflectionKind.Variable, "A"],
             [ReflectionKind.Variable, "A"],
         ]);
-        equal(getLinkTexts(localSymbolRef), ["A!", "A2!", "A"]);
+        equal(getLinkTexts(localSymbolRef), ["A!", "A2!", "AnotherName"]);
 
         equal(getLinks(query(project, "scoped")), [
             [ReflectionKind.Property, "Meanings.B.prop"],
@@ -760,6 +773,27 @@ describe("Behavior Tests", () => {
 
         logger.expectMessage(
             "warn: MultiCommentMultiDeclaration has multiple declarations with a comment. An arbitrary comment will be used.",
+        );
+    });
+
+    it("Handles named tuple declarations", () => {
+        const project = convert("namedTupleMembers");
+
+        equal(
+            query(project, "PartiallyNamedTuple").type?.toString(),
+            "[name: string, number]",
+        );
+        equal(
+            query(project, "PartiallyNamedTuple2").type?.toString(),
+            "[name?: string, number?]",
+        );
+        equal(
+            query(project, "PartiallyNamedTupleRest").type?.toString(),
+            "[name?: string, ...number[]]",
+        );
+        equal(
+            query(project, "partiallyNamedTupleRest").type?.toString(),
+            "[name?: string, ...number[]]",
         );
     });
 
